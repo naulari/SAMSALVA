@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %} Friends {% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+
+{% block style %}
+<style>
+    *{
+        box-sizing: border-box;
+    }
+
+    html, body, .wrapper {
+        height: 100%;
+    }
+
+    body{
+        display: grid;
+        place-items: center;
+        margin: 0;
+        padding: 0;
+        background: var(--light-blue);
+        background-repeat: no-repeat;
+        background-size: cover;
+        font-family: 'Ubuntu', sans-serif;
+        color: #000;
+        animation: rotate 6s infinite alternate linear;
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        margin: 20px;
+        padding: 70px 30px 44px;
+        border-radius: 1.25rem;
+        background: #fff;
+        text-align: center;
+    }
+
+    .login-card > h2 {
+        font-size: 36px;
+        font-weight: 800;
+        margin: 0 0 30px;
+    }
+
+    .login-card > h3 {
+        font-size: 1rem;
+        font-weight: 20;
+        margin: 0 0 30px;
+        color: rgba(0,0,0,0.38);
+    }
+
+    .login-form {
+        width: 100%;
+        margin: 0;
+        display: grid;
+        gap: 16px;
+    }
+
+    .login-form > input, .login-form > button {
+        width: 100%;
+        height: 50px;
+    }
+
+    .login-form > input {
+        border: 2px solid #ebebeb;
+        font-family: inherit;
+        font-size: 15px;
+        padding: 0 16px;
+        border-radius: 1.25rem;
+        transition: all 0.375s;
+    }
+
+    .login-form > input:hover {
+        border: 2px solid #10449A;
+    }
+
+    .login-form > button {
+        cursor: pointer;
+        width: 100%;
+        padding: 0 16px;
+        border-radius: 1.25rem;
+        background: #216ce7;
+        color: #f9f9f9;
+        border: 0;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: 2px;
+        transition: all 0.375s;
+    }
+
+    .login-form > button:hover {
+        background: #10449A;
+    }
+
+    .login-form > footer {
+        color: black;
+        font-size: 0.9rem;
+        text-align: left;
+        text-decoration: none;
+        margin-bottom: 6px;
+        transition: all 0.375s;
+    }
+
+    .login-form > footer > a {
+        color: #216ce7;
+        text-decoration: none;
+        transition: all 0.375s;
+    }
+
+    @keyframes rotate {
+        100%{
+            background-position: 15% 50%;
+        }
+    }
+
+    @media (width >= 500px){
+        body{
+            padding: 0;
+        }
+        .login-card{
+            margin: 0;
+            width: 400px;
+        }
+    }
+
+
+</style>
+{% endblock %}
+
+{% block nav %}
+  <ul class="navbar">
+    <li><a href="/home"> HOME </a></li>
+    <li><a href="/friends" class="active" >FRIENDS</a></li>
+    <li><a href="/upload">UPLOAD</a></li>
+    <li><a href="/community">COMMUNITY</a></li>
+    <li><a href="/search">SEARCH</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+        <div>
+            <br></br>
+        </div>
+        <div class="login-card">
+            <h2>Add Friends</h2>
+            <h3>{{user}}</h3>
+
+
+            <form class="login-form" method="post" enctype="multipart/form-data" action="/friends">
+                <input type="friendEmail" for="friendEmail" id="friendEmail" name="friendEmail" placeholder="Friend's Email">
+                <p id="email-error" style="display: none; color: rgba(205, 61, 100, 1); font-family: inherit; font-size: 15px;"></p>
+                {% if success%}
+                <span style="color: rgb(61, 205, 85); font-family: inherit; font-size: 15px; display: flex; justify-content: center;">{{success}}</span>
+                {% elif fail%}
+                <span style="color: rgb(205, 61, 100, 1); font-family: inherit; font-size: 15px; display: flex; justify-content: center;">{{fail}}</span>
+                {% endif %}
+                <button type="submit">Add Friend</button>
+                <footer>
+                    <a href="/home">Return Home</a>
+                </footer>
+            </form>
+        </div>
+        <div>
+            <br></br>
+        </div>
+
+        <div class="login-card">
+            <h2>Your Friends</h2>
+            {% if friends %}
+            <ul>
+                {% for friend in friends %}
+                <p>{{friend}}</p>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <h2>Recommendations</h2>
+            {% if recs %}
+            <ul>
+                {% for friend in recs %}
+                <p>{{friend}}</p>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        <div>
+            <br></br>
+        </div>
+{% endblock %}
+
+
+{% block script %}
+        <script>
+            function validateForm() {
+                var emailInput = document.getElementById("email");
+                var emailError = document.getElementById("email-error");
+                
+                if (emailInput.value.trim() === "") {
+                    emailError.innerHTML = "Please enter an email.";
+                    emailError.style.display = "block";
+                    return false;
+                } else if (!emailInput.validity.valid) {
+                    emailError.innerHTML = "Please enter a valid email.";
+                    emailError.style.display = "block";
+                    return false;
+                } else {
+                    emailError.style.display = "block";
+                    return true;
+                }
+            }
+        </script>
+{% endblock %}

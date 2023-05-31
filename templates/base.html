@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %} {% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static',filename='styles/base.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  {% block head %} {% endblock %}
+  <!-- Pick font later -->
+
+</head>
+
+{%block style%} {%endblock%}
+
+<body>
+  <!-- Navbar (sit on top) -->
+  <header>
+    <a href="/" class="logo"> <i class="ri-polaroid-2-line"></i><span>SAMSALVA</span></a>
+    {% block nav %}
+    <ul class="navbar">
+      <li><a href="/home"> HOME </a></li>
+      <li><a href="/friends">FRIENDS</a></li>
+      <li><a href="/upload">UPLOAD</a></li>
+      <li><a href="/community">COMMUNITY</a></li>
+      <li><a href="/search">SEARCH</a></li>
+    </ul>
+    {% endblock %}
+
+    <div class="main">
+      <a href="/profile" class="user"> <i class="ri-user-3-line"></i>PROFILE</a>
+      <a href="/logout" class="logout"> <i class="ri-logout-box-r-line"></i>LOG OUT</a>
+      <div class="bx bx-menu" id="menu-icon"></div>
+    </div>
+
+  </header>
+
+  <!-- Big seperator so nav bar is easily visible -->
+  <!-- <div style="height: 100px;"></div> -->
+
+  <main>
+    {% block content %} {% endblock %}
+  </main>
+
+<script>
+
+    let menu = document.querySelector('#menu-icon');
+    let navbar = document.querySelector('.navbar');
+
+    menu.onclick = () => {
+    menu.classList.toggle('bx-x');
+    navbar.classList.toggle('open');
+    }
+    document.addEventListener("DOMContentLoaded", function(event) { 
+      var scrollpos = localStorage.getItem('scrollpos');
+      if (scrollpos) window.scrollTo(0, scrollpos);
+  });
+
+  window.onbeforeunload = function(e) {
+      localStorage.setItem('scrollpos', window.scrollY);
+  };
+</script>
+
+{%block script%} {%endblock%}
+
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=myMap"></script> -->
+
+  </body>
+  </html>

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% block title %} Photo Upload {% endblock %}
+
+{% block head %}
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+
+{% block style %}
+
+<style>
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: var(--light-blue);
+}
+
+
+.container {
+	max-width: 400px;
+	width: 120%;
+	background: #fff;
+	padding: 30px;
+	border-radius: 30px;
+}
+.img-area {
+	position: relative;
+	width: 100%;
+	height: 240px;
+	background: var(--grey);
+	margin-bottom: 30px;
+	border-radius: 15px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+.img-area .icon {
+	font-size: 100px;
+}
+.img-area h3 {
+	font-size: 20px;
+	font-weight: 500;
+	margin-bottom: 6px;
+}
+.img-area p {
+	color: #999;
+}
+.img-area p span {
+	font-weight: 600;
+}
+.img-area img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	z-index: 100;
+}
+.img-area::before {
+	content: attr(data-img);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .5);
+	color: #fff;
+	font-weight: 500;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+	opacity: 0;
+	transition: all .3s ease;
+	z-index: 200;
+}
+.img-area.active:hover::before {
+	opacity: 1;
+}
+.select-image {
+	display: block;
+	width: 100%;
+	padding: 16px 0;
+	border-radius: 15px;
+	background: var(--blue);
+	color: #fff;
+	font-weight: 500;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	transition: all .3s ease;
+}
+.select-image:hover {
+	background: var(--dark-blue);
+}
+
+.login-form > input, .login-form > button{
+	width: 100%;
+	height: 50px;
+}
+
+.login-form > input {
+	border: 2px solid #ebebeb;
+	font-family: inherit;
+	font-size: 15px;
+	padding: 0 16px;
+	border-radius: 1.25rem;
+	transition: all 0.375s;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+	border: 2px solid #ebebeb;
+	font-family: inherit;
+	font-size: 15px;
+	padding: 10px;
+	border-radius: 1.25rem;
+	transition: all 0.375s;
+	cursor: pointer;
+	display: block;
+	text-align: center;
+}
+
+.niceButton {
+	border: 1px;
+	font-family: inherit;
+	font-size: 12px;
+	padding: 8px 12px;
+	border-radius: 1.25rem;
+	transition: all 0.375s;
+	cursor: pointer;
+}
+
+.niceTags {
+	border: 2px solid #ebebeb;
+	background-color: white;
+	font-family: inherit;
+	font-size: 12px;
+	padding: 8px 12px;
+	border-radius: 1.25rem;
+	transition: all 0.375s;
+	cursor: pointer;
+}
+
+.tag {
+	display: inline-block;
+	padding: 4px 8px;
+	margin: 4px;
+	background-color: #eee;
+	border-radius: 16px;
+	font-size: 12px;
+}
+.tag .close-btn{
+	margin-left: 8px;
+	cursor: pointer;
+}
+
+.caption {
+	text-align: left;
+}
+    </style>
+
+{% endblock %}
+
+{% block nav %}
+  <ul class="navbar">
+    <li><a href="/home"> HOME </a></li>
+    <li><a href="/friends">FRIENDS</a></li>
+    <li><a href="/upload" class="active">UPLOAD</a></li>
+    <li><a href="/community">COMMUNITY</a></li>
+    <li><a href="/search">SEARCH</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<input type="file" id="file" accept="image/*" hidden>
+		<div class="img-area" data-img="">
+			<i class='bx bxs-cloud-upload icon'></i>
+			<h3>Upload Image</h3>
+			<p>{{user}}</p>
+		</div>
+
+		<form class="login-form" method="post" enctype="multipart/form-data" action="/upload">
+			
+			<label class="custom-file-upload">
+				<input id="file" name="photoUpload" type="file"/>
+				<i class="fa fa-cloud-upload"></i> Upload Photo
+			</label>
+			<br>
+			<div class="caption">
+				<label for="caption">Caption</label>
+			</div>
+			<input type="text" name="caption" placeholder="Add Caption"/>
+			
+			<br></br>
+			<div class="caption">
+				<label  for="caption">Tags</label>
+			</div>
+			
+			<div>
+				<input id="tag-input" class="niceTags" type="text" name="tags" placeholder="Add Tags"/>
+				<button id="add-tag" class="niceButton">Add</button>
+			</div>
+			<input type="hidden" id="tag-storage" name="tag-storage"/>
+			<div id="tag-container"></div>
+			<br>
+			<br />
+			{% if success%}
+			<span style="color: rgb(61, 205, 85); font-family: inherit; font-size: 15px; display: flex; justify-content: center;">{{success}}</span>
+			{% elif fail%}
+			<span style="color: rgb(205, 61, 100, 1); font-family: inherit; font-size: 15px; display: flex; justify-content: center;">{{fail}}</span>
+			{% endif %}
+			<button class="select-image">Submit</button>
+		</form>
+		
+	</div>
+{% endblock %}
+
+{% block script %}
+<script>
+	const fileTag = document.querySelector('input[name="photoUpload"]');
+	const inputFile = document.querySelector('#file');
+	const imgArea = document.querySelector('.img-area');
+	const tagInput = document.getElementById("tag-input");
+	const addTagBttn = document.getElementById("add-tag");
+	const tagContainer = document.getElementById("tag-container");
+	const tagStorage = document.getElementById("tag-storage");
+
+	fileTag.addEventListener("change", function() {
+		changeImage(this);
+	});
+
+	tagInput.addEventListener('keydown', function(e) {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			addTag(tagInput.value);
+		}
+	});
+
+	addTagBttn.addEventListener('click', function(e) {
+		e.preventDefault();
+		addTag(tagInput.value);
+		tagInput.value = "";
+	});
+
+	function changeImage(input) {
+
+		if (input.files && input.files[0]) {
+			const image = input.files[0];
+			reader = new FileReader();
+
+			reader.onload = ()=> {
+				const allImg = imgArea.querySelectorAll('img');
+				allImg.forEach(item=> item.remove());
+				const imgUrl = reader.result;
+				const img = document.createElement('img');
+				img.src = imgUrl;
+				imgArea.appendChild(img);
+				imgArea.classList.add('active');
+				imgArea.dataset.img = image.name;
+			}
+			reader.readAsDataURL(image);
+		}
+	}
+
+	function addTag(tagValue) {
+		const tags = tagValue.split(" ");
+		for (let i = 0; i < tags.length; i++){
+			const tag = tags[i].trim().toLowerCase();
+			if (tag !== "") {
+				const tagElm = document.createElement("div");
+				const tagText = document.createTextNode(tag);
+				const closeBttn = document.createElement("span");
+				closeBttn.innerHTML = "&times;";
+				closeBttn.classList.add("close-btn");
+				closeBttn.addEventListener("click", function() {
+					tagElm.remove();
+					const tagsContainer = document.getElementById('tag-storage');
+					const tags = tagsContainer.value.split(",");
+					const newTags = tags.filter(function(item) {
+						return item !== tag;
+					});
+					tagsContainer.value = newTags.join(",") + ",";
+				});
+				tagElm.classList.add("tag");
+				tagElm.appendChild(tagText);
+				tagElm.appendChild(closeBttn);
+				tagContainer.appendChild(tagElm);
+				tagStorage.value = tagStorage.value + tag + ",";
+			}
+		}
+		tagInput.value = "";
+	}
+
+	// function getTagValues(){
+	// 	const tagEls = document.querySelectorAll(".tag");
+	// 	const tagValues = [];
+	// 	tagEls.forEach(function(tagEl) {
+	// 		tagValues.push(tagEl.textContent.trim());
+	// 	});
+	// 	return tagValues;
+	// }
+
+</script>
+{% endblock %}

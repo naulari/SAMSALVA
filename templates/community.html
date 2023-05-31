@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Community{% endblock %}
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+
+{% block style %}
+<style>
+    body{
+        font-family: 'Ubuntu', sans-serif;
+    }
+
+    .niceButton {
+        border: 2px solid black;
+        font-family: inherit;
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 20px;
+        transition: all 0.375s;
+        cursor: pointer;
+        text-align: center;
+        background-color: #369eff;
+        font-weight: 500;
+        color: #f9f9f9;
+    }
+
+    .bodyWrapper {
+        padding-left: 50px;
+    }
+
+    .userRank{
+        display: inline-block;
+        font-family: inherit;
+        font-size: 20px;
+        font-weight: 500;
+        padding: 20px;
+        border:black;
+        border-style: double;
+        border-width: thick;
+        background:#369eff;
+        color: #f9f9f9;
+    }
+
+</style>
+{% endblock %}
+
+{% block nav %}
+    <ul class="navbar">
+    <li><a href="/home"> HOME </a></li>
+    <li><a href="/friends">FRIENDS</a></li>
+    <li><a href="/upload">UPLOAD</a></li>
+    <li><a href="/community" class="active">COMMUNITY</a></li>
+    <li><a href="/search">SEARCH</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="bodyWrapper">
+        <div class="headers">
+            <h1><i class="ri-trophy-line"></i>Top Ten Users </h1>
+        </div>
+        <div><br></br></div>
+        {% if topTenUsers %}
+        {% for user in topTenUsers %}
+        <div class="userRank">
+            <p class="fullName">{{user}}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div><br></br></div>
+        <div class="headers">
+            <h1><i class="ri-price-tag-3-line"></i>Top Three Tags</h1>
+        </div>
+        <div><br></br></div>
+        {% if topThreeTags %}
+        {% for tag in topThreeTags %}
+            <br>
+            <form method="post" action="/search" class="inline">
+                <button type="submit" name="submit_param" value="submit_value" class="niceButton">
+                    {{tag[0]}}
+                </button>
+                <div><br></div>
+                <input type="hidden" name="searchTerms" value={{tag[1]}}>
+            </form>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+{% endblock %} 

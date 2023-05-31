@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+
+{% block style %}
+<style>
+    body{
+        font-family: 'Ubuntu', sans-serif;
+    }
+    .grid {
+        margin: 80px;
+        margin-top: 25px;
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        grid-gap: 30px;
+        align-items: center;
+        justify-items: center;
+        transition: all 1s ease;
+    }
+
+    .grid > article{
+        min-width: 400px;
+        min-height: 450px;
+        max-width: 400px;
+        border-radius: 1.25rem;
+        background: #fffef2;
+        display: inline-block;
+        margin: 55px 75px 30px;
+        padding: 15px 15px 30px;
+        text-align: center;
+        text-decoration: none;
+        -webkit-transition: all .20s linear;
+        -moz-transition: all .20s linear;
+        transition: all .20s linear;
+        z-index: 0;
+        position: relative;
+        transition: transform .3s ease;
+   }
+
+
+    .grid > article img{
+        width: 300px;
+        height: 300px;
+   }
+
+    .grid > article img::after{
+        content: "";
+        position: absolute;
+        width: 70%;
+        height: 10%;
+        background: #fff;
+        bottom: -5%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;     
+    }
+
+    .grid > article img::before{
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        z-index: 1;
+    }
+
+    .imgCaption{
+        color: var(--black);
+        padding: 0 20px 20px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 1300px){
+        .grid{
+        grid-template-columns: repeat(2, 1fr);
+        }
+        .grid > article{
+        text-align: center;
+        }
+    }
+
+    @media (max-width: 900px){
+        .grid{
+            grid-template-columns: repeat(1,1fr);
+        }
+
+        .grid > article{
+            text-align: center;
+        }
+    }
+
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+
+    .tab button:hover {
+        background-color: #ddd;
+    }
+
+    .tab button.active {
+        background-color: #ccc;
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    .user {
+        color: #302e89;
+    }
+
+    .dropbtn {
+        padding: 16px;
+        cursor:pointer;
+        border-radius: 1.25rem;
+        background: #216ce7;
+        font-family: inherit;
+        color: #f9f9f9;
+        border: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        transition: all 0.375s;
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .dropdown-content a:hover {background-color: #ddd;}
+    
+    .dropdown:hover .dropdown-content {display: block;}
+    
+    .dropdown:hover .dropbtn {background-color: #512BA0;}
+
+    .niceTag {
+    padding: 6px;
+    border-radius: 1.25rem;
+    background: #eee;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+  }
+
+  .searchBox {
+        border: 2px solid #ebebeb;
+        font-family: inherit;
+        font-size: 20px;
+        padding: 0 16px;
+        border-radius: 1.25rem;
+        transition: all 0.375s;
+    }
+
+    .searchButton {
+        display: inline-block;
+        width: 70px;
+        padding: 16px 0;
+        border-radius: 15px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 500;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+
+</style>
+{% endblock %}
+
+{% block nav %}
+    <ul class="navbar">
+        <li><a href="/home"> HOME </a></li>
+        <li><a href="/friends">FRIENDS</a></li>
+        <li><a href="/upload">UPLOAD</a></li>
+        <li><a href="/community">COMMUNITY</a></li>
+        <li><a href="/search">SEARCH</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="headers">
+        <h1>Create New Album</h1>
+    </div>
+    <br></br>
+    <form action="/profile" method="post">
+        <input type="text" class="searchBox" id="albumName" name="albumName" placeholder="Album Name">
+        <input type="submit" class="searchButton" value="Create">
+    </form>
+    <br></br>
+    <div class="headers">
+        <h1>Your Albums</h1>
+    </div>
+    <div class="grid">
+    {% if albumsResult %}
+    {% for album in albumsResult %}
+        <article title="{{album[1]}}">
+            <a href="/album/{{album[0]}}/{{album[1]}}">
+                <img class="img" src="static/uploads/{{album[2]}}" alt="{{album[1]}}" title="{{album[1]}}">
+            </a>
+            <br>
+            <p class="imgCaption">{{album[1]}}</p>
+            {% if loop.index0 == 0 %}
+            {% else %}
+            <br>
+                <a href="/album/delete/{{album[0]}}" style="display: flex; justify-content: center;">Delete Album</a>
+            {% endif %}
+        </article>
+    {% endfor %}
+    {% else %}
+        <h2 class="user">No Albums Found</h2>
+    {% endif %}
+    </div>
+    <div class="headers">
+        <h1>Your Photos</h1>
+    </div>
+    <div class="grid">
+    {% if userResult %}
+    {% for photo in userResult %}
+        <article title="{{photo[1]}}">
+            <img class="img" src="static/uploads/{{photo[2]}}" alt="{{photo[1]}}" title="{{photo[1]}}">
+            <p class="imgCaption">{{photo[1]}}</p>
+            {% if userResultTags[loop.index0] %}
+            <br>
+
+            {% for tag in userResultTags[loop.index0] %}
+            <form action="/search" style="display: inline-block;" method="post">
+                <button class="niceTag" type="submit">{{tag}}</button>
+                <input type="hidden" name="searchTerms" value="{{tag}}">
+            </form>
+            {% endfor %}
+            
+            <div style="padding: 12px;"></div>
+            {% else %}
+            <div style="padding: 20px;"></div>
+            {% endif %}
+            <br>
+            <div class="dropdown">
+                <button class="dropbtn">Add To Album</button>
+                <div class="dropdown-content">
+                {% for alb in userAlbums %}
+                  <a href="/addAlbum/{{alb[0]}}/{{photo[0]}}">{{alb[1]}}</a>
+                {% endfor %}
+                </div>
+              </div>
+            <br>
+            <br>
+            <a href="/photo/delete/{{photo[0]}}" style="display: flex; justify-content: center;">Delete Photo</a>
+        </article>
+    {% endfor %}
+    {% else %}
+        <h2 class="user">No Photos Found</h2>
+    {% endif %}
+    </div>
+    <div class="headers">
+        <h1>You May Like These</h1>
+    </div>
+    <div class = "grid">
+    {% if photoRecs %}
+    {% for photo in photoRecs %}
+        <article title="{{photo[0][1]}}">
+            <img class="img" src="static/uploads/{{photo[0][2]}}" alt="{{photo[0][1]}}" title="{{photo[0][1]}}">
+            <br>
+    {% if tagData[loop.index0] %}
+    <br>
+
+      {% for tag in tagData[loop.index0] %}
+      <form action="/search" style="display: inline-block;" method="post">
+        <button class="niceTag" type="submit">{{tag}}</button>
+        <input type="hidden" name="searchTerms" value="{{tag}}">
+      </form>
+      {% endfor %}
+    
+      <div style="padding: 12px;"></div>
+    {% else %}
+      <div style="padding: 20px;"></div>
+    {% endif %}
+        <p class="imgCaption">{{photo[0][1]}}</p>
+        </article>
+    {% endfor %}
+    {% else %}
+        <h2 class="user">No Photos Found</h2>
+    {% endif %}
+
+
+    </div>
+    
+
+
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+

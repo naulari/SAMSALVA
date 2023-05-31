@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+
+{% block style %}
+<style>
+
+body{
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.grid {
+     margin: 80px;
+     margin-top: 25px;
+     margin-left: 25px;
+     margin-right: 25px;
+     display: grid;
+     grid-template-columns: repeat(2,1fr);
+     grid-gap: 30px;
+     align-items: center;
+     justify-items: center;
+     transition: all 1s ease;
+   }
+
+   .grid > article{
+    min-width: 400px;
+    min-height: 450px;
+    max-width: 400px;
+    border-radius: 1.25rem;
+    background: #fffef2;
+    display: inline-block;
+    margin: 55px 75px 30px;
+    padding: 15px 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    -webkit-transition: all .20s linear;
+    -moz-transition: all .20s linear;
+    transition: all .20s linear;
+    z-index: 0;
+    position: relative;
+    transition: transform .3s ease;
+   }
+
+   .grid > article img{
+    width: 300px;
+    height: 300px;
+   }
+
+   .grid > article img::after{
+      content: "";
+      position: absolute;
+      width: 70%;
+      height: 10%;
+      background: #fff;
+      bottom: -5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;     
+   }
+
+   .grid > article img::before{
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      z-index: 1;
+   }
+
+   .imgCaption{
+     top: 10px;
+     position: relative;
+     color: var(--black);
+     padding: 0 20px 20px;
+     font-size: 25px;
+     font-weight: 600;
+   }
+
+   @media (max-width: 1300px){
+     .grid{
+       grid-template-columns: repeat(2, 1fr);
+     }
+     .grid > article{
+       text-align: center;
+     }
+   }
+
+   @media (max-width: 900px){
+       .grid{
+           grid-template-columns: repeat(1,1fr);
+       }
+
+       .grid > article{
+           text-align: center;
+       }
+   }
+
+    .collapse{
+      cursor: pointer;
+      width: 50%;
+      height: 50%;
+      padding: 0 16px;
+      border-radius: 1.25rem;
+      background: #216ce7;
+      color: #f9f9f9;
+      border: 0;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 2px;
+      transition: all 0.375s;
+    }
+    .collapse + input{
+      display: none; /* hide the checkboxes */
+    }
+    .collapse + input + div{
+      display:none;
+    }
+    .collapse + input:checked + div{
+      display:inline-block;
+      -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+      -moz-box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+      position:absolute;
+      background: #fffef2;
+      border: black;
+      z-index:10;
+      left:80%;
+      padding:15px;
+      top:60%;
+    }
+
+   #comment{
+    display: none;
+   }
+
+   .niceButton {
+    cursor: pointer;
+    width: 50%;
+    height: 50%;
+    padding: 0 16px;
+    border-radius: 1.25rem;
+    background: #216ce7;
+    color: #f9f9f9;
+    border: 0;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 2px;
+    transition: all 0.375s;
+  }
+
+  .niceTag {
+    padding: 6px;
+    border-radius: 1.25rem;
+    background: #eee;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+  }
+
+  .searchBox {
+        border: 2px solid #ebebeb;
+        font-family: inherit;
+        font-size: 20px;
+        padding: 0 16px;
+        border-radius: 1.25rem;
+        transition: all 0.375s;
+    }
+
+    .searchButton {
+        display: inline-block;
+        margin-top: 15px;
+        width: 150px;
+        padding: 6px 10px;
+        border-radius: 15px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 500;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+
+</style>
+{% endblock %}
+
+{% block nav %}
+  <ul class="navbar">
+    <li><a href="/home" class="active"> HOME </a></li>
+    <li><a href="/friends">FRIENDS</a></li>
+    <li><a href="/upload">UPLOAD</a></li>
+    <li><a href="/community">COMMUNITY</a></li>
+    <li><a href="/search">SEARCH</a></li>
+  </ul>
+{% endblock %}
+
+
+{% block content %}
+  {% if photoData %}
+  <div class="headers">
+    <h1 style="text-align: center;">Explore Photos</h1>
+  </div>
+  <div class = "grid">
+    {% for photo in photoData %}
+    <article title="{{photo[1]}}">
+      <img class="img" height="250" src="/static/uploads/{{photo[2]}}" alt="{{photo[1]}}" title="{{photo[1]}}"/>
+      <p class="imgCaption">{{photo[1]}}</p>
+      
+      {% if tagData[loop.index0] %}
+      {% for tag in tagData[loop.index0] %}
+      <form action="/search" style="display: inline-block;" method="post">
+        <button class="niceTag" type="submit">{{tag}}</button>
+        <input type="hidden" name="searchTerms" value="{{tag}}">
+      </form>
+      {% endfor %}
+      <div style="padding: 12px;"></div>
+      {% else %}
+      <div style="padding: 20px;"></div>
+      {% endif %}
+      
+      {% if likeData[loop.index0] %}
+
+      {% endif %}
+      <label class="collapse" for="_{{photo[0]}}">View Comments</label>
+      <input id="_{{photo[0]}}" type="checkbox"> 
+      <div id="photo{{photo[0]}}">
+        <form action="/comment" method="POST">
+          <input type="hidden" name="photo_id" value="{{photo[0]}}">
+          <input type="text" class="searchBox" name="comment" placeholder="Comment">
+          <input type="submit" class="searchButton" value="Submit">
+        </form>
+        {% if commentData[loop.index0] %}
+        {% for comment in commentData[loop.index0] %}
+          <p>{{comment[0]}}: {{comment[1]}}</p>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <br></br>
+      <form method="post" action="/like">
+        <input type="hidden" name="photo_id" value="{{photo[0]}}">
+        <label class="collapse" for="_L{{photo[0]}}">♥: {{likeData[loop.index0]|length}}</label>
+        <input id="_L{{photo[0]}}" type="checkbox"> 
+        <div>
+          Who Liked: {{likeData[loop.index0]}}
+        </div>
+        {% if anonymous %}
+          {% if youAlreadyLike[loop.index0] == True%}
+          <br></br>
+          <button type="submit" class="niceButton" value="UnLike" name="UnLike">Unlike</button>
+          {% else %}
+          <br></br>
+          <button type="submit" class="niceButton" value="Like" name="Like">Like</button>
+          {% endif %}
+        {% endif %}
+      </form>
+
+    </article>
+    {% endfor %}
+    {% endif %}
+    </div>
+  
+  {% if not photoData %}
+    <h1 style="text-align: center;">Explore Photos</h1>
+    <p>There are no photos to display.</p>
+  {% endif %}
+  <br></br>
+
+  {% if albumsData %}
+  <div class="headers">
+    <h1  style="text-align: center;">Explore Albums</h1>
+  </div>
+  <div class = "grid">
+    {% for album in albumsData %}
+    <article title="{{album[1]}}">
+      <a href="/album/{{album[0]}}/{{album[1]}}">
+        <img class="img" src="static/uploads/{{album[2]}}" alt="{{album[1]}}" title="{{album[1]}}">
+      </a>
+      <br>
+      <p class="imgCaption">{{album[1]}}</p>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if not albumsData %}
+    <h1  style="text-align: center;">Explore Albums</h1>
+    <p>There are no albums to display.</p>
+  {% endif %}
+  
+    
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) { 
+        var scrollpos = localStorage.getItem('scrollpos');
+        if (scrollpos) window.scrollTo(0, scrollpos);
+    });
+
+    window.onbeforeunload = function(e) {
+        localStorage.setItem('scrollpos', window.scrollY);
+    };
+</script>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
